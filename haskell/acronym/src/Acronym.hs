@@ -3,12 +3,10 @@ import Data.Char
 
 
 abbreviate :: String -> String
-abbreviate text = foldr (folding) [] $ unwords . map (upFirst) . map (mapper) $ words text 
-   where  mapper [] = []
-          mapper text@(a:xs) | all isUpper text = a:[]
-                             | not $ isAlpha a = upFirst xs
-                             | otherwise = a : mapper xs       
-          folding el xs | isUpper el = el:xs
-                        | otherwise  = xs
-          upFirst [] = []
-          upFirst (x:xs) = toUpper x : xs
+abbreviate text = reverse $ resr "" $ unwords . map mapper $ words  text
+  where  resr acc [] = acc
+         resr acc text@(a:xs) | not $ isAlpha a = resr acc ((toUpper $ head xs) : (tail xs))
+                              | isUpper a       = resr (a:acc) xs
+                              | otherwise       = resr acc xs
+         mapper word | all isUpper word = head word : []
+                     | otherwise = word
